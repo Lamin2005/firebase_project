@@ -1,38 +1,174 @@
-.App {
+.home {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.home .title {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.maintitle {
+  width: 50%;
+  padding: 0.5rem;
+  border-radius: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.maintitle .text {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+  background-color: ghostwhite;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.maintitle .form form {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.form input {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+}
+
+.form button {
+  margin-left: 0.5rem;
+  padding: 0.5rem 2rem;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.profile {
+  width: 50%;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile .profile_data {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.profile .profileimg {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.profile .profileimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile .profileinfo {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  margin-left: 0.5rem;
+}
+
+
+
+.profile button {
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: crimson;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.translation {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 1.5rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.translation h2 {
+  border-bottom: 1px solid black;
+}
+
+.translation .lsit {
+  width: 100%;
+}
+
+.list .translation-item {
+  padding: 0.5rem;
+  background-color: ghostwhite;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+@media screen and (max-width:768px) {
+  .maintitle {
+    width: 90%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
   }
-  to {
-    transform: rotate(360deg);
+
+  .profile {
+    width: 90%;
+    flex-direction: column;
+
   }
+
+  .profile .signoutbtn {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+  }
+
+  .translation {
+    width: 90%;
+
+  }
+
+  .maintitle .text {
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+
+  }
+
+  .maintitle .form form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+  }
+
+  form input {
+    margin-bottom: 0.5rem;
+  }
+
+  form button{
+    width: 90%;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+
 }
