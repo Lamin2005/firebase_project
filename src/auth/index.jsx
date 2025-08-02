@@ -1,26 +1,23 @@
-import { useState } from "react";
-import {auth, prvider} from "../config/firebaseAuth";
+import { useState,useEffect } from "react";
+import {auth, provider} from "../config/firebaseAuth";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { userGetInfo } from "../hook/userGetInfo";
+import { useUserInfo } from "../hook/useUserInfo";
 
 
 function Login() {
 
   let [loading,setLoading] = useState(false);
   let navigate = useNavigate();
-  let { uid } = userGetInfo();
-
-  if(uid){
-    // If user is already signed in, redirect to money tracker page
-    navigate('/moneytracker');
-  }
+  let { uid } = useUserInfo();
+  console.log("Login uid:", uid);
+  
 
   // Function to handle sign-in with Google
   let Sigin = async () => {
     try {
       setLoading(true);
-      let result = await signInWithPopup(auth, prvider);
+      let result = await signInWithPopup(auth, provider);
       console.log(result);
       let user = {
         uid: result.user.uid,

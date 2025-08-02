@@ -1,13 +1,14 @@
-import { userGetInfo } from "../hook/userGetInfo";
+import { useEffect } from "react";
+import { useUserInfo } from "../hook/useUserInfo";
 import  { Navigate } from "react-router-dom";
 
 function ProtectRout({ children }) {
-  let { uid } = userGetInfo();
-
-  if (uid === null) {
-    return <Navigate to="/" />;
-  }
-
+  let { uid } = useUserInfo();
+  console.log("ProtectRout uid:", uid);
+  // If uid is null, redirect to login page 
+  if (!uid) {
+    return <Navigate to="/" replace />;
+  } 
   return children;
 }
 

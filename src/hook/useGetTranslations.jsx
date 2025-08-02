@@ -1,4 +1,4 @@
-import { userGetInfo } from "../hook/userGetInfo";
+import { useUserInfo } from "./useUserInfo";
 import { db } from "../config/firebaseAuth";
 import {
   collection,
@@ -10,7 +10,9 @@ import {
 import { useEffect, useState } from "react";
 
 export function useGetTranslations() {
-  let { uid } = userGetInfo();
+  let { uid } = useUserInfo();
+  console.log("useGetTranslations uid:", uid);
+  
   let [translations, setTranslations] = useState([]);
   let [loading, setLoading] = useState(true);
   let translationsCollection = collection(db, "translations");
@@ -44,8 +46,9 @@ export function useGetTranslations() {
     return () => usub();
   };
   useEffect(() => {
+    if (!uid) return;
     getTranslations();
-  }, []);
+  }, [uid]);
 
   return { translations,loading };
 }

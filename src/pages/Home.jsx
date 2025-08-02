@@ -1,15 +1,15 @@
 import { auth } from "../config/firebaseAuth";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { userGetInfo } from "../hook/userGetInfo";
+import { useUserInfo } from "../hook/useUserInfo";
 import { useAddtranslation } from "../hook/useAddtranslation";
 import { useState } from "react";
 import { useGetTranslations } from "../hook/useGetTranslations";
 
 function Home() {
   const navigate = useNavigate();
-  let { uid, name, email, photoURL } = userGetInfo();
-  let { addtranslation } = useAddtranslation();
+  let { uid, name, email, photoURL } = useUserInfo();
+  let { addtranslation} = useAddtranslation();
   let { translations, loading } = useGetTranslations();
 
   // State variables for the form
