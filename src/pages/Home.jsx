@@ -5,12 +5,17 @@ import { useUserInfo } from "../hook/useUserInfo";
 import { useAddtranslation } from "../hook/useAddtranslation";
 import { useState } from "react";
 import { useGetTranslations } from "../hook/useGetTranslations";
+import { doc } from "firebase/firestore";
+import { deleteDoc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebaseAuth";
+import SkeletonBox from "../components/Skeletonbox";
 
 function Home() {
   const navigate = useNavigate();
   let { uid, name, email, photoURL } = useUserInfo();
-  let { addtranslation} = useAddtranslation();
+  let { addtranslation } = useAddtranslation();
   let { translations, loading } = useGetTranslations();
+  let [updateId, setUpdateId] = useState(null);
 
   // State variables for the form
   let [description, setDescription] = useState("");
@@ -34,6 +39,24 @@ function Home() {
 
   console.log("User Info:", { uid, name, email, photoURL });
 
+  let deleteTranslation = async (id) => {
+    try {
+      const translationRef = doc(db, "translations", id);
+      await deleteDoc(translationRef);
+      alert("Translation deleted successfully!");
+    } catch (error) {
+      console.log("Error deleting translation: ", error);
+      alert("Error deleting translation: " + error.message);
+    }
+  };
+
+  let updateTranslation = (id) => {
+    setUpdateId(id);
+    setDescription(translations.find((trans) => trans.id === id).description);
+    setAmount(translations.find((trans) => trans.id === id).amount);
+    setType(translations.find((trans) => trans.id === id).type);
+  };
+
   const SignOut = async () => {
     try {
       await signOut(auth);
@@ -54,38 +77,44 @@ function Home() {
       </h1>
 
       <div className="profile">
-       <div className="profile_data">
-         <div className="profileimg">
-          <img
-            src={
-              photoURL
-                ? photoURL
-                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6M2DZzPSIGEMTJPF6xZg5XRrwlyPgACyEgg&s"
-            }
-            alt={name}
-          />
+        <div className="profile_data">
+          <div className="profileimg">
+            <img
+              src={
+                photoURL
+                  ? photoURL
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6M2DZzPSIGEMTJPF6xZg5XRrwlyPgACyEgg&s"
+              }
+              alt={name}
+            />
+          </div>
+          <div className="profileinfo">
+            <span style={{ fontWeight: "bolder" }}>{name}</span>
+            <span>{email}</span>
+          </div>
         </div>
-        <div className="profileinfo">
-          <span style={{fontWeight:"bolder"}}>{name}</span>
-          <span>{email}</span>
+        <div className="signoutbtn">
+          <button
+            onClick={() => {
+              SignOut();
+            }}
+          >
+            Signout
+          </button>
         </div>
-       </div>
-       <div className="signoutbtn">
-         <button
-          onClick={() => {
-            SignOut();
-          }}
-        >
-          Signout
-        </button>
-       </div>
       </div>
 
       <div className="maintitle">
         <div className="text">
-          <h2 style={{color:"blue"}}>Your Balance - {balance ? balance : "00.00"}</h2>
-          <h3 style={{color:"green"}}>Income - {income ? income : "00.00"}</h3>
-          <h3 style={{color:"red"}}>Expenses - {expenses ? expenses : "00.00"}</h3>
+          <h2 style={{ color: "blue" }}>
+            Your Balance - {balance ? balance : "00.00"}
+          </h2>
+          <h3 style={{ color: "green" }}>
+            Income - {income ? income : "00.00"}
+          </h3>
+          <h3 style={{ color: "red" }}>
+            Expenses - {expenses ? expenses : "00.00"}
+          </h3>
         </div>
         <div className="form">
           <form
@@ -95,8 +124,20 @@ function Home() {
                 alert("Please fill in all fields.");
                 return;
               }
-              addtranslation({ description, amount, type });
-              alert("Translation added successfully!");
+              if (updateId) {
+                // Update logic here
+                const translationRef = doc(db, "translations", updateId);
+                updateDoc(translationRef, {
+                  description,
+                  amount,
+                  type,
+                });
+                alert("Translation updated successfully!");
+                setUpdateId(null);
+              } else {
+                addtranslation({ description, amount, type });
+              }
+
               setDescription("");
               setAmount("");
               setType("income");
@@ -115,26 +156,26 @@ function Home() {
               onChange={(e) => setAmount(e.target.value)}
             />
             <div className="type">
-               <input
-              type="radio"
-              name="income"
-              id="income"
-              value="income"
-              checked={type === "income"}
-              onChange={(e) => setType(e.target.value)}
-            />
-            <label htmlFor="income">Income</label>
-            <input
-              type="radio"
-              name="expense"
-              id="expense"
-              value="expense"
-              checked={type === "expense"}
-              onChange={(e) => setType(e.target.value)}
-            />
-            <label htmlFor="expense">Expense</label>
+              <input
+                type="radio"
+                name="income"
+                id="income"
+                value="income"
+                checked={type === "income"}
+                onChange={(e) => setType(e.target.value)}
+              />
+              <label htmlFor="income">Income</label>
+              <input
+                type="radio"
+                name="expense"
+                id="expense"
+                value="expense"
+                checked={type === "expense"}
+                onChange={(e) => setType(e.target.value)}
+              />
+              <label htmlFor="expense">Expense</label>
             </div>
-            <button type="submit">Add</button>
+            <button type="submit">{updateId ? "Edit" : "Add"}</button>
           </form>
         </div>
       </div>
@@ -143,7 +184,13 @@ function Home() {
         <h2>Translations</h2>
 
         <div className="list">
-          {loading && <p>Loading translations...</p>}
+          {loading && (
+            <>
+              <SkeletonBox height="100px" style={{ marginBottom: "1rem" }} />
+              <SkeletonBox height="100px" style={{ marginBottom: "1rem" }} />
+              <SkeletonBox height="100px" style={{ marginBottom: "1rem" }} />
+            </>
+          )}
           {translations.length === 0 && !loading && (
             <p>No translations found.</p>
           )}
@@ -188,6 +235,22 @@ function Home() {
                       translation.createTime?.toDate()
                     ).toLocaleDateString()}
                   </p>
+
+                  <div className="controls">
+                    <button
+                      onClick={() => deleteTranslation(translation.id)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      className="update-button"
+                      onClick={() => updateTranslation(translation.id)}
+                    >
+                      Update
+                    </button>
+                  </div>
                 </div>
               ))}
         </div>
